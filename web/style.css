@@ -1,0 +1,26 @@
+/* 
+    Created on : Sep 10, 2015, 12:16:16 PM
+    Author     : Johnny Salammi
+*/
+a:link {
+    text-decoration: none;
+    color: black;    
+}
+a:visited {
+    color: black;
+}
+a:hover {
+    color: blue;
+}
+a:active {
+    color: red;
+} 
+.background_color{
+    background-color: #ffffcc;
+} 
+.footer_background_color{
+    background-color: #669966;
+} 
+.footer_font_color{
+    color: #ffffff;
+} 

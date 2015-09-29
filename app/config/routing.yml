@@ -1,0 +1,24 @@
+homePage:
+    path:      /home/
+    defaults:  { _controller: AppBundle:Default:index }
+signIn:
+    path:      /signIn/
+    defaults:  { _controller: AppBundle:Default:signIn }
+signIn_process:
+    path:      /signIn_process/
+    defaults:  { _controller: AppBundle:Default:signIn_process }
+signOut:
+    path:      /signOut/
+    defaults:  { _controller: AppBundle:Default:signOut }
+browsePrints:
+    path:      /browsePrints/
+    defaults:  { _controller: AppBundle:Default:browsePrints }
+viewCart:
+    path:      /viewCart/
+    defaults:  { _controller: AppBundle:Default:viewCart }
+register:
+    path:      /register/
+    defaults:  { _controller: AppBundle:Default:register }
+register_process:
+    path:      /register_process/
+    defaults:  { _controller: AppBundle:Default:register_process }

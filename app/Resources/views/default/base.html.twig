@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('style.css') }}" />
+        <link href="{{ asset('bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    {% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('jquery-2.1.4.js') }}"></script>
+        <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+<body>
+    <div class="table-responsive">
+        <table class="table" cellspacing="0" cellpadding="0" border="0" align="center" width="90%">
+            <tr>
+                <td align="center" colspan="5"><img src="images/titles.jpg" width="600" height="61" border="0" alt="title or logo" /></td>
+            </tr>
+            <tr align="center">
+                <td><a class="btn btn-default" href="{{ path('homePage') }}"><img src="images/homes.jpg" width="200" height="39" border="0" alt="home page" /></a></td>
+                <td><a class="btn btn-default" href="{{ path('browsePrints') }}"><img src="images/print.jpg" width="200" height="39" border="0" alt="view the prints" /></a></td>
+                <td><a class="btn btn-default" href="{{ path('viewCart') }}"><img src="images/carts.jpg" width="200" height="39" border="0" alt="view your cart" /></a></td>
+                {% if loggedIn == 1 %}
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">Welcome, {{first_name|escape}} {{last_name|escape}}</button>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Edit Profile</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a class="sign_out" href="{{ path('signOut') }}">Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                {% else %}
+                    <td>
+                        <a class="btn btn-default" href="{{ path('signIn') }}">
+                            <img src="" width="200" height="39" border="0" alt="Sign In" />
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{{ path('register') }}">
+                            <img src="" width="200" height="39" border="0" alt="Create Account" />
+                        </a>
+                    </td>
+                {% endif %}            
+            </tr>
+            <tr class="background_color">
+                <td align="left" colspan="5" >                    
+                    <br />
+                    {% block body %}
+                        <p>Welcome to our site....please use the links above...blah, blah, blah.</p>
+                        <p>Welcome to our site....please use the links above...blah, blah, blah.</p>
+                    {% endblock %}
+                    <br />
+                </td>
+            </tr>
+            <tr>
+                <td class="footer_background_color" align="center" colspan="5"><font class="footer_font_color">&copy; Copyright...</font></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

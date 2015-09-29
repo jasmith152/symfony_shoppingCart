@@ -1,0 +1,32 @@
+{% extends 'default/base.html.twig' %}
+{% block body %}
+    <div class="container">
+        <form style="width:50%;margin-left:25%" class="form_login" name="create_account" action="{{ path('register_process') }}" method="post">
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="name" name="first_name" class="form-control" id="first_name" placeholder="First Name" required="required">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="name" name="last_name" class="form-control" id="last_name" placeholder="Last Name" required="required">
+            </div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="Email address" required="required">
+            </div>
+            <div class="form-group">
+                <label for="confirm_email">Confirm Email address</label>
+                <input type="email" name="confirm_email" class="form-control" id="confirm_email" placeholder="Confirm Email address" required="required">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Password" required="required">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Confirm Password" required="required">
+            </div>
+            <button type="submit" name="create_account_submit" class="create_account_submit btn btn-default">Submit</button>
+        </form>
+    </div>
+{% endblock %}
