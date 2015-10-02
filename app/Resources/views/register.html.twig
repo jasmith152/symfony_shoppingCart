@@ -2,6 +2,9 @@
 {% block body %}
     <div class="container">
         <form style="width:50%;margin-left:25%" class="form_login" name="create_account" action="{{ path('register_process') }}" method="post">
+            {% if error is not empty %}
+                <div class="form-group">{{error}}</div>
+            {% endif %}
             <div class="form-group">
                 <label for="first_name">First Name</label>
                 <input type="name" name="first_name" class="form-control" id="first_name" placeholder="First Name" required="required">

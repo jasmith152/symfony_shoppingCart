@@ -1,33 +1,9 @@
 {% extends 'default/base.html.twig' %}
 {% block body %}
     <div class="container">
-        <form style="width:50%;margin-left:25%" class="form-horizontal" action="{{ path('signIn_process') }}" method="post" border="0">
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-                <div class="col-sm-10">
-                    <input type="email" class="form-control" name="email" id="inputEmail3" placeholder="Email">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-                <div class="col-sm-10">
-                    <input type="password" name="password" class="form-control" id="inputPassword3" placeholder="Password">
-                </div>
-            </div>
-            <!--  <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox"> Remember me
-                    </label>
-                  </div>
-                </div>
-              </div>-->
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" name="sign_in_submit" class="btn btn-default">Sign in</button>
-                </div>
-            </div>
-        </form>
+        <p>The print has been added to your shopping cart.
+        <a href="{{path('browsePrints')}}"><input type="button" name="continue" value="Continue Shopping"></a>
+        <a href="{{path('viewCart')}}"><input type="button" name="view_cart" value="View Cart" /></a>
+        </p>
     </div>
 {% endblock %}

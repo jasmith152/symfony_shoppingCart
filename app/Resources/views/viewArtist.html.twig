@@ -1,11 +1,15 @@
 {% extends 'default/base.html.twig' %}
 {% block body %}
     {% for row in data %}
-    <div align="center"><b>{{row.print_name}}</b> by {{row.artist}}<br />
+    <div align="center"><b>{{row.print_name}}</b><br />
         {% if row.size is empty %}No size available{% else %}{{row.size}}{% endif %}
         <br />{{row.price}}
-        </div><br />
-        <div align="center"><img src="{{ asset(row.file_path) }}" /></div><br />   
+        </div>
+        <br />
+        <div align="center">
+            <a href="{{ path('viewPrints', {'pid': row.print_id}) }}"><img src="{{ asset(row.file_path) }}" /></a>
+        </div>
+        <br />   
         <p align="center">{% if row.description is empty %}No description available{% else %}{{row.description}}{% endif %}</p>            
         <p align="center"><a class="btn btn-default" href="{{ path('addCart', {'pid': row.print_id}) }}">Add {{row.print_name}} Cart</a></p>
     {% endfor %}

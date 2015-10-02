@@ -13,6 +13,7 @@ class helperFunctions {
         $session = new Session();   
         return $session;
     }
+    
     function connection(){
         try{
             $results = new PDO("mysql:host=localhost;dbname=shopping_cart","johnny","Question1521");
@@ -25,7 +26,8 @@ class helperFunctions {
         return $results;
     }
 
-    function returnResults($conn,$sql,$sql_params){
+    function returnResults($sql,$sql_params){
+        $conn = $this->connection();
         try{
             $statement = $conn->prepare($sql);
             $statement->execute($sql_params);
@@ -36,7 +38,8 @@ class helperFunctions {
         return $results;
     }
 
-    function insertContent($conn,$sql,$sql_params){
+    function insertContent($sql,$sql_params){
+        $conn = $this->connection();
         try{
             $statement = $conn->prepare($sql);
             $statement->execute($sql_params);  
@@ -47,32 +50,36 @@ class helperFunctions {
         return $results;
     }
 
-    function getImage($name){
-        $image_flag = FALSE;
+    function getImage($results){
+        $i = 0;
         $upload_path = 'images/uploads/';
-        $image = $upload_path.$name;
-        if (!file_exists($image) || !is_file($image)){
-            $image_flag = FALSE;
-            $image = 'images/unavailable.png';
-            $name = 'unavailable.png';
+        foreach($results as $row){
+            $image = $upload_path.$row['file_path'];
+            if (!file_exists($image) || !is_file($image)){
+                $image = 'images/unavailable.png';
+                $name = 'unavailable.png';
+            }
+            $results[$i]['file_path'] = $image;
+            $i++;
         }
-        return $image;
+        return $results;
     }
-    function validate_form(){
+    
+    function validate_form($data){
         $post = array(
-            'first_name' => filter_var($_POST['first_name'], FILTER_SANITIZE_STRING),
-            'last_name' => filter_var($_POST['last_name'], FILTER_SANITIZE_STRING),
-            'email' => filter_var($_POST['email'], FILTER_SANITIZE_EMAIL),
-            'confirm_email' => filter_var($_POST['confirm_email'], FILTER_SANITIZE_EMAIL, FILTER_SANITIZE_EMAIL),
-            'password' => filter_var($_POST['password'], FILTER_SANITIZE_STRING),
-            'confirm_password' => filter_var($_POST['confirm_password'], FILTER_SANITIZE_STRING)
+            'first_name' => filter_var($data['first_name'], FILTER_SANITIZE_STRING),
+            'last_name' => filter_var($data['last_name'], FILTER_SANITIZE_STRING),
+            'email' => filter_var($data['email'], FILTER_SANITIZE_EMAIL),
+            'confirm_email' => filter_var($data['confirm_email'], FILTER_SANITIZE_EMAIL, FILTER_SANITIZE_EMAIL),
+            'password' => filter_var($data['password'], FILTER_SANITIZE_STRING),
+            'confirm_password' => filter_var($data['confirm_password'], FILTER_SANITIZE_STRING)
         );
-        unset($_POST);
         foreach($post as $row => $value){
             $value = filter_var($value, FILTER_FLAG_STRIP_LOW,FILTER_FLAG_STRIP_HIGH);
         }
         return $post;
     }
+    
     function error_check($post){
         if(empty($post['password'])){$error['password'] = "Please enter a password.";}
         if(!filter_var($post['email'], FILTER_VALIDATE_EMAIL)){$error['email'] = "Invalid E-Mail Address";}
@@ -80,45 +87,50 @@ class helperFunctions {
         $sql_params = array(
             ':email' => $post['email']
         );        
-        $results = returnResults($conn,$sql,$sql_params);
+        $results = $this->returnResults($sql,$sql_params);
         if($results){$error['dup_account'] = "This username/email account is already registered and in use";}
         if($post['email'] !== $post['confirm_email']){$error['confirm_email'] = "Email entered do not match";}
         if($post['password'] !== $post['confirm_password']){$error['confirm_password'] = "password entered do not match";}
-        if(isset($error) && !empty($error)){
-            echo '<Pre>';print_r($_SESSION);print_r($error);exit;
-            //header("Location: register.php");
+        if(!isset($error)){
+            $error = "";
         }
+        return $error;
     }
-    function create_account_submit(){
-        if(isset($_POST['create_account_submit'])){
-            $conn = connection();
-            $post = validate_form();
-            error_check($post);    
+    
+    function create_account_submit($data){
+        $conn = $this->connection();
+        $data = $this->validate_form($data);
+        $error = $this->error_check($data);  
+        if(empty($error)){
             $sql = "INSERT INTO customers(first_name, last_name, email, password, salt) 
-                   VALUES (:first_name,:last_name,:email,:password,:salt)";
+               VALUES (:first_name,:last_name,:email,:password,:salt)";
             $salt = dechex(mt_rand(0, 2147483647)) . dechex(mt_rand(0, 2147483647));
-            $password = hash('sha256', $post['password'] . $salt);
+            $password = hash('sha256', $data['password'] . $salt);
             for($i = 0; $i < 65536; $i++)
             {
                 $password = hash('sha256', $password . $salt);
             }
             $sql_params = array(
-                ':first_name' => $post['first_name'],
-                ':last_name' => $post['last_name'],
-                ':email' => $post['email'],
+                ':first_name' => $data['first_name'],
+                ':last_name' => $data['last_name'],
+                ':email' => $data['email'],
                 ':password' => $password,
                 ':salt' => $salt
             );
-            $success = insertContent($conn,$sql,$sql_params);
+            $success = $this->insertContent($sql,$sql_params);
             if(filter_var($success, FILTER_VALIDATE_INT)){
-                $_SESSION['user']['email'] = $post['email'];
-                $_SESSION['user']['first_name'] = $post['first_name'];
-                $_SESSION['user']['last_name'] = $post['last_name'];
-                header("Location: ../index.php");
+                $session = $this->startSession();
+                $session->set('user_customer_id', $success);
+                $session->set('user_first_name', $data['first_name']);
+                $session->set('user_last_name', $data['last_name']);
+                $session->set('user_email', $data['email']);
+                $create_account_ok = 1;
             }else{
-                $_SESSION['error']['create_account'] = "there was a problem creating your account. please contact someone about it.";
-                header("Location: ../register.php");
+                $create_account_ok = "there was a problem creating your account. please contact someone about it.";
             }
+            return $create_account_ok;
+        }else{
+            return $error;
         }
     }
 
@@ -148,9 +160,9 @@ class helperFunctions {
             $session->set('user_first_name', $results[0]['first_name']);
             $session->set('user_last_name', $results[0]['last_name']);
             $session->set('user_email', $results[0]['email']);
-            unset($results);
             $session->remove('error');
         }  
+        unset($results);
         return $login_ok;
     }
 
@@ -165,5 +177,21 @@ class helperFunctions {
             $logout = 0;
         }
         return $logout;
+    }
+    
+    function loggedInCheck(){
+        $session = $this->startSession();
+        if($session->has('user_customer_id')){
+            $loggedIn = 1;
+            $name = $session->get('user_first_name').' '.$session->get('user_last_name');
+        }else{
+            $loggedIn = 0;
+            $name = '';
+        }   
+        $data = array(
+            'loggedIn' => $loggedIn,
+            'name' => $name,
+        );
+        return $data;
     }
 }
