@@ -4,11 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/src/AppBundle/Controller/DefaultController.php</file>
-            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/config/config.yml</file>
-            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/register.html.twig</file>
+            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/viewPrint.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/config/routing.yml</file>
-            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/signIn.html.twig</file>
-            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/config/services.yml</file>
+            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/addCart.html.twig</file>
+            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/browsePrints.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/default/base.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/index.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/src/AppBundle/services/helperFunctions.php</file>

@@ -25,6 +25,9 @@ addCart:
 viewCart:
     path:      /viewCart/
     defaults:  { _controller: AppBundle:Default:viewCart }
+checkOut:
+    path:      /checkOut/
+    defaults:  { _controller: AppBundle:Default:checkOut }
 register:
     path:      /register/
     defaults:  { _controller: AppBundle:Default:register }

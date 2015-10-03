@@ -143,7 +143,7 @@ class helperFunctions {
         $sql_params = array(
             ':email' => $email
         );
-        $results = $this->returnResults($conn,$sql,$sql_params);
+        $results = $this->returnResults($sql,$sql_params);
         $login_ok = false;
         if(is_array($results)){
             $check_password = hash('sha256', $password . $results[0]['salt']);
@@ -194,4 +194,14 @@ class helperFunctions {
         );
         return $data;
     }
+    
+    function createSessionArray($cart,$results,$pid){
+        $pid_array = array(
+            'quantity' => 1,
+            'price' => $results[0]['price']
+        );
+        $cart[$pid] = $pid_array;
+        return $cart;
+    }
+
 }
