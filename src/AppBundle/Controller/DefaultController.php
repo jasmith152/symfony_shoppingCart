@@ -203,20 +203,23 @@ class DefaultController extends Controller
     {   
         $helperFunctions = $this->get('helperFunctions');
         $session = $helperFunctions->startSession();
-        $cart = $session->get('cart');
         $posted = $request->request->all();      
         if(isset($posted['submit'])){
+            $cart = $session->get('cart');
             unset($posted['submit']);
             unset($posted['submitted']);
             foreach($posted as $row=> $value){
                 if($id = str_replace("quantity","",$row)){ 
                     if($value == 0){
+                        unset($cart[$id]);
                     }else{
                         $cart[$id]['quantity'] = $value;
                     }                    
                 }
             } 
+            $session->set('cart', $cart);
         }
+        $cart = $session->get('cart');
         if(!empty($cart)){
             $print_ids = '';
             foreach ($cart as $pid => $value) {
@@ -242,8 +245,11 @@ class DefaultController extends Controller
                 $tax = $order_total * $tax_percent;
                 $grand_total = $order_total + $tax;
                 $results['order_total'] = number_format($order_total,2);
+                $session->set('order_total', number_format($order_total,2));
                 $results['tax'] = number_format($tax,2);
+                $session->set('tax', number_format($tax,2));
                 $results['grand_total'] = number_format($grand_total,2);
+                $session->set('grand_total', number_format($grand_total,2));
             }else{
                 $error = '<div align="center">'.$results.'</div>';
             }    
@@ -266,24 +272,63 @@ class DefaultController extends Controller
     
     public function checkOutAction(Request $request)
     {   
-        
-        echo "inside checkout";exit;
         $helperFunctions = $this->get('helperFunctions');
-        $aid = $request->query->get('aid');
-        $sql = "SELECT prints.*,artists.artists_id,CONCAT_WS(' ', first_name, middle_name, last_name) AS artist FROM prints AS prints
-        JOIN artists ON prints.artist_id = artists.artists_id WHERE prints.artist_id = :artist_id";
+        $session = $helperFunctions->startSession();       
+        $customer = $session->get('user_first_name').' '.$session->get('user_last_name');
+        $customer_id = $session->get('user_customer_id');
+        $order_total = $session->get('order_total');
+        $tax = $session->get('tax');
+        $grand_total = $session->get('grand_total');
+        $cart = $session->get('cart');        
+        $print_ids = '';
+        $quantity = '';
+        foreach ($cart as $pid => $value) {
+            $print_ids .= $pid . ',';
+            $quantity .= $value['quantity']  . ',';
+        }
+        $print_ids = trim(substr($print_ids, 0, -1));
+        $quantity = trim(substr($quantity, 0, -1));
+        $sql = "INSERT INTO orders (customer_id, total) VALUES (:customer_id, :total)";
         $sql_params = array(
-            ':artist_id' => $aid
-        );
-        $results = $helperFunctions->returnResults($sql,$sql_params);
-        $results = $helperFunctions->getImage($results);
+            ':customer_id' => $customer_id,
+            ':total' => $grand_total
+        ); 
+        $results = $helperFunctions->insertContent($sql,$sql_params);
+        if(is_numeric($results)){	
+            $conn = $helperFunctions->connection();
+            $conn->beginTransaction();
+            $sql = "INSERT INTO order_content (order_id, print_id, quantity, price, customer_id)
+                 VALUES (:order_id, :print_id, :quantity, :price, :customer_id)";
+            $sql_params = array(
+                ':order_id' => rand(0, 1000000),
+                ':print_id' => json_encode($print_ids),
+                ':quantity' => json_encode($quantity),
+                ':price' => $grand_total,
+                ':customer_id' => $customer_id
+            );
+            $results = $helperFunctions->insertContent($sql,$sql_params);
+            if(is_numeric($results)){
+                $conn->commit();
+                unset($_SESSION['cart']);
+                $message = 'Thank you for your order. You will be notified when the items ship.';
+                // Send emails and do whatever else.	
+            }else{
+                $conn->rollBack();		
+                $message = 'Your order could not be processed due to a system error. You will be contacted in order to have the problem fixed. We apologize for the inconvenience.';
+                // Send the order information to the administrator.	
+            }
+        }else{
+            $conn->rollBack();
+            $message = 'Your order could not be processed due to a system error. You will be contacted in order to have the problem fixed. We apologize for the inconvenience.';
+            // Send the order information to the administrator.
+        }
         $login = $helperFunctions->loggedInCheck();
-        $title =  $results[0]['artist'].' Art';
-        return $this->render('viewArtist.html.twig', array(
+        $title = 'Place Your Order';
+        return $this->render('checkOut.html.twig', array(
             'title' => $title,
             'loggedIn' => $login['loggedIn'],
             'name' => $login['name'],
-            'data' => $results,
-        ));
+            'message' => $message
+        )); 
     }    
 }
