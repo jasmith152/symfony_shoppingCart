@@ -4,7 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/src/AppBundle/Controller/DefaultController.php</file>
-            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/viewCart.html.twig</file>
+            <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/checkOut.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/default/base.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/app/Resources/views/index.html.twig</file>
             <file>file:/C:/xampp/htdocs/symfony_shoppingCart/src/AppBundle/services/helperFunctions.php</file>

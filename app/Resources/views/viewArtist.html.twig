@@ -1,16 +1,35 @@
 {% extends 'default/base.html.twig' %}
 {% block body %}
+    {% set counter = 1 %}
+    <table align="center" width="80%" border="0">
+        <tr>
     {% for row in data %}
-    <div align="center"><b>{{row.print_name}}</b><br />
-        {% if row.size is empty %}No size available{% else %}{{row.size}}{% endif %}
-        <br />{{row.price}}
-        </div>
-        <br />
-        <div align="center">
-            <a href="{{ path('viewPrints', {'pid': row.print_id}) }}"><img src="{{ asset(row.file_path) }}" /></a>
-        </div>
-        <br />   
-        <p align="center">{% if row.description is empty %}No description available{% else %}{{row.description}}{% endif %}</p>            
-        <p align="center"><a class="btn btn-default" href="{{ path('addCart', {'pid': row.print_id}) }}">Add {{row.print_name}} Cart</a></p>
+        <td>
+            <div align="center"><b>{{row.print_name}}</b><br />
+                {% if row.size is empty %}No size available{% else %}{{row.size}}{% endif %}
+                <br />{{row.price}}
+            </div>
+            <br />
+            <div align="center">
+                <a href="{{ path('viewPrints', {'pid': row.print_id}) }}"><img src="{{ asset(row.file_path) }}" /></a>
+            </div>
+            <br />   
+            <p align="center">{% if row.description is empty %}No description available{% else %}{{row.description}}{% endif %}</p>            
+            <p align="center"><a class="btn btn-default" href="{{ path('addCart', {'pid': row.print_id}) }}">Add {{row.print_name}} Cart</a></p>
+        </td>
+        {% if counter == 5 %}
+            </tr><tr>
+            {% set counter = 1 %}
+        {% else %}
+            {% set counter = counter + 1 %}
+        {% endif %}
     {% endfor %}
+    {% if counter != 5%}
+        {% for counter in counter..5 %}
+            <td></td>
+            {% set counter = counter + 1 %}
+        {% endfor %}
+    {% endif%}
+        </tr>
+    </table>
 {% endblock %}
